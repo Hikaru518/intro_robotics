@@ -37,7 +37,7 @@ l_6 = 180; % [mm]
 % Tool dimensions in millimeters
 l_t_rad = 50; % [mm]
 l_t = 300; % [mm]
-...
+
 
 
 
@@ -50,7 +50,7 @@ fanuc_struct.parameters.l_3 = l_3;
 fanuc_struct.parameters.l_4 = l_4;
 fanuc_struct.parameters.l_5 = l_5;
 fanuc_struct.parameters.l_6 = l_6;
-...
+
 fanuc_struct.parameters.l_t = l_t;
 fanuc_struct.parameters.l_t_rad = l_t_rad;
 
@@ -84,7 +84,7 @@ fanuc_struct.joint_limits{2} = [-80,80]*deg2rad;
 fanuc_struct.joint_limits{3} = [-80,80]*deg2rad;
 fanuc_struct.joint_limits{4} = [-240,240]*deg2rad;
 fanuc_struct.joint_limits{5} = [-120,120]*deg2rad;
-fanuc_struct.joint_limits{6} = [450,450]*deg2rad;
+fanuc_struct.joint_limits{6} = [-450,450]*deg2rad;
 
 % Set bounds on the cartesian workspace of the FANUC for plotting in the
 % form:  [ xmin, xmax, ymin, ymax, zmin, zmax]

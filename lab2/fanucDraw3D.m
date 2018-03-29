@@ -43,11 +43,12 @@ for t = 1:size(s,2)
     T(1:3,4) = position;
     T(4,:) = [0,0,0,1];
     [is_solution,joint_angles] = fanucIK(T,prev_angles,fanuc);
+%     is_solution
     ...
     
     % Move robot using setFanuc() if solution exists
     if(is_solution)
-        setFanuc(angles,fanuc);
+        setFanuc(joint_angles,fanuc);
     end
     ...
     

@@ -34,7 +34,6 @@ l_3 = fanuc.parameters.l_3;
 l_4 = fanuc.parameters.l_4;
 l_5 = fanuc.parameters.l_5;
 l_6 = fanuc.parameters.l_6;
-
 l_t = fanuc.parameters.l_t;
 l_t_rad = fanuc.parameters.l_t_rad;
 
@@ -59,12 +58,34 @@ zlabel('Z (mm)','FontSize',16);
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Draw Robot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% % Create link 0 and frame 0
+% h = drawRobotFrame([0,0,0]);
+% hg = hggroup('Parent',ax);
+% set(h,'Parent',hg);
+% circ = linspace(0,2*pi,50);
+% L_0 = line(100*cos(circ),100*sin(circ),-l_1*ones(length(circ)),'Color','k','LineWidth',1.5);
+% set(L_0,'Parent',hg);
+% T_0 = hgtransform('Parent',ax,'Matrix',makehgtform('translate',[0,0,l_1]));
+% set(hg,'Parent',T_0);
+% 
+% % Create link 1 and frame 1
+% h = drawRobotFrame(fanuc.colors{1});
+% hg = hggroup('Parent',ax);
+% set(h,'Parent',hg);
+% L_1 = line([0,0,l_2],[0,0,0],[-l_1,0,0],'Color',fanuc.colors{1},'LineWidth',1.5);
+% set(L_1,'Parent',hg);
+% T_1 = hgtransform('Parent',T_0,'Matrix',fanuc_T{1});
+% set(hg,'Parent',T_1);
+
+
 % Create link 0 and frame 0
 h = drawRobotFrame([0,0,0]);
 hg = hggroup('Parent',ax);
 set(h,'Parent',hg);
 circ = linspace(0,2*pi,50);
-L_0 = line(100*cos(circ),100*sin(circ),-l_1*ones(length(circ)),'Color','k','LineWidth',1.5);
+L_0 = line(100*cos(circ),100*sin(circ),...
+    -l_1*ones(length(circ)),...
+    'Color','k','LineWidth',1.5);
 set(L_0,'Parent',hg);
 T_0 = hgtransform('Parent',ax,'Matrix',makehgtform('translate',[0,0,l_1]));
 set(hg,'Parent',T_0);
@@ -73,7 +94,8 @@ set(hg,'Parent',T_0);
 h = drawRobotFrame(fanuc.colors{1});
 hg = hggroup('Parent',ax);
 set(h,'Parent',hg);
-L_1 = line([0,0,l_2],[0,0,0],[-l_1,0,0],'Color',fanuc.colors{1},'LineWidth',1.5);
+L_1 = line([0,0,l_2],[0,0,0],[-l_1,0,0],...
+    'Color',fanuc.colors{1},'LineWidth',1.5);
 set(L_1,'Parent',hg);
 T_1 = hgtransform('Parent',T_0,'Matrix',fanuc_T{1});
 set(hg,'Parent',T_1);
@@ -82,7 +104,8 @@ set(hg,'Parent',T_1);
 h = drawRobotFrame(fanuc.colors{2});
 hg = hggroup('Parent',ax);
 set(h,'Parent',hg);
-L_2 = line([0,l_3],[0,0],[0,0],'Color',fanuc.colors{2},'LineWidth',1.5);
+L_2 = line([0,l_3],[0,0],[0,0],...
+    'Color',fanuc.colors{2},'LineWidth',1.5);
 set(L_2,'Parent',hg);
 T_2 = hgtransform('Parent',T_1,'Matrix',fanuc_T{2});
 set(hg,'Parent',T_2);
@@ -91,33 +114,83 @@ set(hg,'Parent',T_2);
 h = drawRobotFrame(fanuc.colors{3});
 hg = hggroup('Parent',ax);
 set(h,'Parent',hg);
-L_3 = line([0,l_4,l_4],[0,0,-l_5],[0,0,0],'Color',fanuc.colors{3},'LineWidth',1.5);
+L_3 = line([0,l_4,l_4],[0,0,-l_5],[0,0,0],...
+    'Color',fanuc.colors{3},'LineWidth',1.5);
 set(L_3,'Parent',hg);
 T_3 = hgtransform('Parent',T_2,'Matrix',fanuc_T{3});
 set(hg,'Parent',T_3);
 
-% Create frame 4
+% Create link 4 and frame 4
 h = drawRobotFrame(fanuc.colors{4});
 hg = hggroup('Parent',ax);
 set(h,'Parent',hg);
+L_4 = line([0,0,0],[0,0,0],[0,0,0],...
+    'Color',fanuc.colors{4},'LineWidth',1.5);
+set(L_4,'Parent',hg);
 T_4 = hgtransform('Parent',T_3,'Matrix',fanuc_T{4});
 set(hg,'Parent',T_4);
 
 % Create link 5 and frame 5
 h = drawRobotFrame(fanuc.colors{5});
 hg = hggroup('Parent',ax);
-L_5 = line([0,0],[0,-l_6],[0,0],'Color',fanuc.colors{5},'LineWidth',1.5);
-set(L_5,'Parent',hg);
 set(h,'Parent',hg);
+L_5 = line([0,0],[0,-l_6],[0,0],...
+    'Color',fanuc.colors{5},'LineWidth',1.5);
+set(L_5,'Parent',hg);
 T_5 = hgtransform('Parent',T_4,'Matrix',fanuc_T{5});
 set(hg,'Parent',T_5);
 
-% Create frame 6
+% Create link 6 and frame 6
 h = drawRobotFrame(fanuc.colors{6});
 hg = hggroup('Parent',ax);
 set(h,'Parent',hg);
+L_6 = line([0,0],[0,-l_6],[0,0],...
+    'Color',fanuc.colors{5},'LineWidth',1.5);
+set(L_6,'Parent',hg);
 T_6 = hgtransform('Parent',T_5,'Matrix',fanuc_T{6});
 set(hg,'Parent',T_6);
+
+
+% % Create link 2 and frame 2
+% h = drawRobotFrame(fanuc.colors{2});
+% hg = hggroup('Parent',ax);
+% set(h,'Parent',hg);
+% L_2 = line([0,l_3],[0,0],[0,0],'Color',fanuc.colors{2},'LineWidth',1.5);
+% set(L_2,'Parent',hg);
+% T_2 = hgtransform('Parent',T_1,'Matrix',fanuc_T{2});
+% set(hg,'Parent',T_2);
+% 
+% % Create link 3 and frame 3
+% h = drawRobotFrame(fanuc.colors{3});
+% hg = hggroup('Parent',ax);
+% set(h,'Parent',hg);
+% L_3 = line([0,l_4,l_4],[0,0,-l_5],[0,0,0],'Color',fanuc.colors{3},'LineWidth',1.5);
+% set(L_3,'Parent',hg);
+% T_3 = hgtransform('Parent',T_2,'Matrix',fanuc_T{3});
+% set(hg,'Parent',T_3);
+% 
+% % Create frame 4
+% h = drawRobotFrame(fanuc.colors{4});
+% hg = hggroup('Parent',ax);
+% set(h,'Parent',hg);
+% T_4 = hgtransform('Parent',T_3,'Matrix',fanuc_T{4});
+% set(hg,'Parent',T_4);
+% 
+% % Create link 5 and frame 5
+% h = drawRobotFrame(fanuc.colors{5});
+% hg = hggroup('Parent',ax);
+% L_5 = line([0,0],[0,-l_6],[0,0],'Color',fanuc.colors{5},'LineWidth',1.5);
+% set(L_5,'Parent',hg);
+% set(h,'Parent',hg);
+% T_5 = hgtransform('Parent',T_4,'Matrix',fanuc_T{5});
+% set(hg,'Parent',T_5);
+% 
+% % Create frame 6
+% h = drawRobotFrame(fanuc.colors{6});
+% hg = hggroup('Parent',ax);
+% set(h,'Parent',hg);
+% T_6 = hgtransform('Parent',T_5,'Matrix',fanuc_T{6});
+% set(hg,'Parent',T_6);
 
 % Tool base frame (coincident with frame 6)
 hg = hggroup('Parent',ax);

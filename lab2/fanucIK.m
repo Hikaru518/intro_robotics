@@ -8,19 +8,19 @@ function [is_solution,joint_angles] = fanucIK(T,prev_joint_angles,fanuc)
 % parameter setting
 alpha = [0,pi/2,0,pi/2,-pi/2,pi/2];
 a = [0,300,900,180,0,0];
-d = [1000,0,0,1600,0,180];
+d = [0,0,0,1600,0,180];
 l6 = 180;
 
 is_solution = true;
 
 % workspace checking
-endeff_x = T(1,4);
-endeff_y = T(2,4);
-endeff_z = T(3,4);
-if sqrt(endeff_x^2+endeff_y^2)>2739 || endeff_x<-2739*cos(pi/6) || endeff_z>3238 || endeff_z<-721 
-    is_solution = false;
-    return;
-end
+% endeff_x = T(1,4);
+% endeff_y = T(2,4);
+% endeff_z = T(3,4);
+% if sqrt(endeff_x^2+endeff_y^2)>2739 || endeff_x<-2739*cos(pi/6) || endeff_z>3238 || endeff_z<-721 
+%     is_solution = false;
+%     return;
+% end
 
 % solve for theta1, theta2, theta3
 p5 = inv(T)*([0,0,-l6,1]');
@@ -94,7 +94,7 @@ T36 = T03*T;
 
 Point3 = T36(1:3,4);
 x3 = Point3(1); y3 = Point3(2); z3 = Point3(3);
-theta4 = atan(y3/x3);
+theta4 = atan(y3/(x3-180));
 
 T34 = dhtf(alpha(4),a(4),d(4),theta4);
 T04 = T03*T34;
@@ -110,7 +110,7 @@ R05 = T05(1:3,1:3);
 R06 = T(1:3,1:3);
 Ttmp = dhtf(alpha(6),a(6),d(6),0);
 Rtmp = Ttmp(1:3,1:3);
-Rz = inv(Rtmp)*inv(R05)*R06;
+Rz = R06*inv(R05)*inv(Rtmp);
 theta6 = acos(Rz(1,1));
 
 theta_solution2 = [theta1, theta2, theta3, theta4, theta5, theta6];
@@ -126,13 +126,13 @@ end
 
 % check joint limit
 %%%%%%TO DO%%%%%%
-for ii = 1:6
-    limit = fanuc.joint_limits{ii};
-    if(joint_angles(ii)<limit(1) || joint_angles(ii)>limit(2))
-        is_solution = false;
-        return;
-    end
-end
+% for ii = 1:6
+%     limit = fanuc.joint_limits{ii};
+%     if(joint_angles(ii)<limit(1) || joint_angles(ii)>limit(2))
+%         is_solution = false;
+%         return;
+%     end
+% end
 %%%%%%TO DO%%%%%%
 
 end
