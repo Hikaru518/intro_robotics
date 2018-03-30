@@ -1,3 +1,7 @@
+% Name:
+%   Peiguang Wang
+%   Sichao Zhang
+
 function [ T,fanuc_T ] = fanucFK( joint_angles,fanuc )
 
 l_1 = fanuc.parameters.l_1;

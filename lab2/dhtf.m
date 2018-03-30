@@ -1,3 +1,7 @@
+% Name:
+%   Peiguang Wang
+%   Sichao Zhang
+
 function [T] = dhtf(alpha,a,d,theta)
 %Accepts 4 DH parameters and returns corresponding transformation matrix
 % Group: Peiguang Wang, Sichao Zhang

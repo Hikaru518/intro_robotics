@@ -1,3 +1,7 @@
+% Name:
+%   Peiguang Wang
+%   Sichao Zhang
+
 function [is_solution,joint_angles] = fanucIK(T,prev_joint_angles,fanuc)
 % Takes as its inputs a transform T describing the desired position and 
 % orientation of the end effector (NOT the tool), a 6-element vector of 
@@ -51,6 +55,7 @@ if round(sin(theta1)*1000)/1000 == 0
 end
 %%%%%%%%%%%%%%%%%%%%%%%
 
+% sovle for theta2, using results from last homework
 l1_tmp = 900;
 l2_tmp = sqrt(180*180+1600*1600);
 alpha_tmp = atan2(180,1600);
@@ -60,7 +65,6 @@ tmp_b = z5;
 
 beta = atan2(tmp_b,tmp_a);
 
-% sovle for theta2
 tmp = acos((tmp_a^2+tmp_b^2+l1_tmp^2-l2_tmp^2)/(2*l1_tmp*sqrt(tmp_a^2+tmp_b^2)));
 if (tmp < 0)
     tmp = tmp + pi;
@@ -85,6 +89,7 @@ else
 end
 res(:,3) = [theta3_1, theta3_2, theta3_1, theta3_2]';
 
+% solve for theta4, theta5, and theta6
 for i = 1:2
     joint_angles = res(i,:);
     
@@ -122,7 +127,6 @@ distance4 = norm(prev_joint_angles-res(4,:));
 distance = [distance1,distance2,distance3,distance4];
 [minValue,minPos] = min(distance);
 joint_angles = res(minPos,:);
-
 
 % check joint limit
 for ii = 1:6

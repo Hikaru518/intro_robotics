@@ -1,3 +1,7 @@
+% Name:
+%   Peiguang Wang
+%   Sichao Zhang
+
 function fanucDraw3D( path_file )
 % MECH 498/598 - Intro to Robotics - Spring 2016
 % Lab 2 - Inverse Kinematics
