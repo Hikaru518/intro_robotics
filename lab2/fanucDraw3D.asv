@@ -30,30 +30,34 @@ for t = 1:size(s,2)
     ...
     
     % Select desired orientation for the tool (your choice)
-    orientation = eye(3);
+    T = diag(ones(1,4)); T(2,2) = -1; T(3,3) = -1; % make z downwards
     ...
     
     % Set desired position for the tool from path file (not your choice)
     position = s(:,t);
+    T_tmp = fanuc.tool{c(t)};
+    T(1:3,4) = position;
+    T06 = T*inv(T_tmp);
     ...
     
     % Solve inverse kinematics for nearest solution
-    T = zeros(4,4);
-    T(1:3,1:3) = orientation;
-    T(1:3,4) = posision;
-    T(4,:) = [0,0,0,1];
-    [is_solution,joint_angles] = fanucIK(T,prev_angles,fanuc);
+    [is_solution,joint_angles] = fanucIK(T06,prev_angles,fanuc);
     ...
     
     % Move robot using setFanuc() if solution exists
+    if(is_solution)
+        setFanuc(joint_angles,fanuc);
+    elseif(is_solution == false)
+        disp('NO SOLUTION!')
+    end
     ...
     
     % Plot a point at the tool brush tip with the appropriate color
     % (unless the brush selection is zero)
     if(fanuc.brush > 0)
-        scatter3(position(1),position(2),position(3),...
-            'MarkerFaceColor',fanuc.brush_colors(c(t)),...
-            'Marker');
+        scatter3(position(1),position(2),position(3)+1000,...
+            'MarkerFaceColor',fanuc.brush_colors{c(t)},...
+            'MarkerEdgeColor',fanuc.brush_colors{c(t)});
     end
     ...
     
