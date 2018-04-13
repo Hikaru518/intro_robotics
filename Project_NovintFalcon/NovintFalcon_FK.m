@@ -17,8 +17,8 @@ for ii = 1 : 3
     theta_1 = thetas(ii,1);
     theta_2 = thetas(ii,2);
     theta_3 = thetas(ii,3);
-    NF_T{ii,1} = [cos(phi(ii)),sin(phi(ii)),0,r*cos(phi(ii)); 
-                  -sin(phi(ii)),cos(phi(ii)),0,r*sin(phi(ii));
+    NF_T{ii,1} = [cos(phi(ii)),-sin(phi(ii)),0,r*cos(phi(ii)); 
+                  sin(phi(ii)),cos(phi(ii)),0,r*sin(phi(ii));
                   0,0,1,0;
                   0,0,0,1];
     NF_T{ii,2} = dhtf(pi/2,0,0,theta_1);
