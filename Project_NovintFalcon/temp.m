@@ -19,7 +19,7 @@ figure('Color','w');
 
 % Create axes object
 ax = axes('XLim',workspace(1:2),'YLim',workspace(3:4),'ZLim',workspace(5:6));
-% vw = [31.3,22.8];
+vw = [31.3,22.8];
 set(gca,'View',vw);
 grid minor;
 % axis equal;

@@ -1,4 +1,5 @@
 function [ NovintFalcon_T ] = NovintFalcon_FK( thetas )
+% compute the forward kinematics of the novintFalcon Robot
 
 % parameters
 phi(1) = 0*pi/180;

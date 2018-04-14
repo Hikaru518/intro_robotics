@@ -1,4 +1,5 @@
 function [ thetas ] = NovintFalcon_IK( position )
+% 
 
 % parameters
 phi(1) = 0*pi/180;
@@ -51,6 +52,8 @@ for ii = 1 : 3
     thetas(ii,:) = [theta_1,theta_2,theta_3];
 end
 %
+
+
 
 end
 
