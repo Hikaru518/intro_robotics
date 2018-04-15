@@ -115,20 +115,28 @@ end
 
 % Plot Output
 figure();
-subplot(311);
-plot(t,k);
-ylabel('Kinematic Energy');
+subplot(511);
+plot(t,k(1,:));
+ylabel('Kinematic Energy \theta_1');
 xlabel('t');
 
-subplot(312);
-plot(t,u);
-ylabel('Potential Energy');
+subplot(512);
+plot(t,k(2,:));
+ylabel('Kinematic Energy \theta_2');
 xlabel('t');
 
-subplot(313);
-plot(t,energy);
+subplot(513);
+plot(t,u(1,:));
+ylabel('Potential Energy \theta_1');
 xlabel('t');
-ylabel('Total Energy');
+
+subplot(514);
+plot(t,u(2,:));
+ylabel('Potential Energy \theta_2');
+xlabel('t');
+
+subplot(515);
+plot(t,energy)
 
 
 end
