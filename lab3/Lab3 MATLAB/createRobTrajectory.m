@@ -20,9 +20,44 @@ function [ trajectory ] = createRobTrajectory( via, rob )
 
 t_f = 30; % final time (do not change) [s]
 
-trajectory(1,:) = []; %Time
-trajectory(2:4,:) = []; %Joint angles
-trajectory(5:7,:) = []; %Joiint velocities
+dt = 0.1;
+t = 0:dt:t_f;
+
+trajectory(1,:) = t; %Time
+
+%
+%% first generate dense joint positions
+d1 = abs(norm(via(:,1) - via(:,2)));
+d2 = abs(norm(via(:,2) - via(:,3)));
+d3 = abs(norm(via(:,3) - via(:,4)));
+totalD = d1 + d2 + d3;
+t1 = d1/totalD*t_f;        % Travelling time between first and second point
+t2 = t1 + d2/totalD*t_f;   % Travelling time between first and third point 
+discTime = [0, t1, t2, t_f];
+
+x_values = interp1(discTime, via(1,:),t);
+y_values = interp1(discTime, via(2,:),t);
+z_values = interp1(discTime, via(3,:),t);
+ik_points = [x_values; y_values; z_values];
+
+% Inverse Kinematics
+prev_joint_angles = zeros(3,1);
+for tStep = 1:length(t)
+    %trajectory(2:4,:) = []; %Joint angles
+    [~, trajectory(2:4,tStep)] = robIK(ik_points(:,tStep),prev_joint_angles, rob);
+    prev_joint_angles = trajectory(2:4,tStep);
+end
+
+% Forward difference
+trajectory(5:7,1) = (trajectory(2:4,2) - trajectory(2:4,1))/dt;
+% Backwards difference
+trajectory(5:7,end) = (trajectory(2:4,end) - trajectory(2:4,end-1))/dt;
+% Central difference
+for tStep = 2:length(t)-1
+    % trajectory(5:7,:) = []; %Joiint velocities
+    trajectory(5:7, tStep) = (trajectory(2:4,tStep+1) - trajectory(2:4,tStep-1))/(2*dt);
+end
+
 
 end
 
