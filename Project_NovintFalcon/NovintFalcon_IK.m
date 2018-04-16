@@ -1,5 +1,5 @@
-function [ thetas ] = NovintFalcon_IK( position )
-% 
+function [ thetas ] = NovintFalcon_IK( prev_thetas,position )
+%%
 
 % parameters
 phi(1) = 0*pi/180;
@@ -17,6 +17,7 @@ p_xyz = position;
 
 % loop: leg 1,2,3
 for ii = 1 : 3
+% ii = 2;
     p_uvw = [cos(phi(ii)),sin(phi(ii)),0; ...
              -sin(phi(ii)),cos(phi(ii)),0; ...
              0,0,1]*p_xyz + [-r;0;0];
@@ -38,22 +39,31 @@ for ii = 1 : 3
             + a^2 + c^2 -d^2 -e^2;
         t_1 = roots([l_2,l_1,l_0]);
     %%%%%%  check t_1 valuable %%%%%%
-        theta_1(:,jj) = atan(t_1)*2;
+        theta_1(:,jj) = acos((1-t_1.^2)./(1+t_1.^2));
     %%%%%%  check theta_1 within boundary %%%%%%
     end
     for kk = 1 : 2 % theta_1
         for jj = 1 : 2 % theta_3
-           theta_2(kk,jj) = atan((p_w-a*sin(theta_1(kk,jj)))/(p_u-a*cos(theta_1(kk,jj))+c));
+           theta_2(kk,jj) = acos((p_u-a*cos(theta_1(kk,jj))+c)/(d+e+b*sin(theta_3(jj))));
            %%%%%%  check theta_2 within boundary %%%%%%
         end
     end
     % four solutions for each leg
+    solutions = [];
+    for kk = 1 : 2 
+        if isreal(theta_1(1,kk)) == 1
+            for jj = 1 : 2 
+                if theta_2(jj,kk) >= theta_1(jj,kk)
+                    solutions = [solutions;theta_1(jj,kk),theta_2(jj,kk),theta_3(:,kk)];
+                end
+            end
+        end
+    end
     %%%%%%  check which solution is the nearest %%%%%%
-    thetas(ii,:) = [theta_1,theta_2,theta_3];
+    bestSolution = findNearestSolution(prev_thetas,solutions);
+    thetas(ii,:) = bestSolution;
 end
 %
-
-
 
 end
 

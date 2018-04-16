@@ -1,5 +1,11 @@
 %%
-thetas = [pi/3,2*pi/3,pi/3;pi/3,2*pi/3,pi/3;pi/3,2*pi/3,pi/3];
+position = [10;10;160];
+prev_thetas = zeros(3,3);
+
+% parameters
+phi(1) = 0*pi/180;
+phi(2) = 120*pi/180;
+phi(3) = 240*pi/180;
 
 a = 60; %mm
 b = 103; %mm
@@ -8,196 +14,57 @@ d = 12; %mm
 e = 12; % mm
 r = 37; %mm
 
-% work space of the Novint Falcon [ xmin, xmax, ymin, ymax, zmin, zmax]
-workspace = [-100,100,-100,100,0,200];
-vector_size = 0.05*max(abs(diff(reshape(workspace,2,3))));
+p_xyz = position;
 
-T = NovintFalcon_FK( thetas );
-
-% Create figure window
-figure('Color','w');
-
-% Create axes object
-ax = axes('XLim',workspace(1:2),'YLim',workspace(3:4),'ZLim',workspace(5:6));
-vw = [31.3,22.8];
-set(gca,'View',vw);
-grid minor;
-% axis equal;
-xlabel('X (mm)','FontSize',10);
-ylabel('Y (mm)','FontSize',10);
-zlabel('Z (mm)','FontSize',10);
+% loop: leg 1,2,3
+% for ii = 1 : 3
+ii = 2;
+    p_uvw = [cos(phi(ii)),sin(phi(ii)),0; ...
+             -sin(phi(ii)),cos(phi(ii)),0; ...
+             0,0,1]*p_xyz + [-r;0;0];
+    p_u = p_uvw(1);
+    p_v = p_uvw(2);
+    p_w = p_uvw(3);
+    % theta_3
+    theta_3(1) = acos(p_v/b);
+    theta_3(2) = -acos(p_v/b);
+    %%%%%%  check theta_3 within boundary %%%%%%
+    % theta_1
+    for jj = 1 : 2
+        l_0 = p_w^2 + p_u^2 + 2*c*p_u - 2*a*p_u - b^2*sin(theta_3(jj))^2 ...
+            - 2*b*e*sin(theta_3(jj)) - 2*b*d*sin(theta_3(jj)) - 2*d*e - 2*a*c ...
+            + a^2 + c^2 -d^2 -e^2;
+        l_1 = - 4*a*p_w;
+        l_2 = p_w^2 + p_u^2 + 2*c*p_u + 2*a*p_u - b^2*sin(theta_3(jj))^2 ...
+            - 2*b*e*sin(theta_3(jj)) - 2*b*d*sin(theta_3(jj)) - 2*d*e + 2*a*c ...
+            + a^2 + c^2 -d^2 -e^2;
+        t_1 = roots([l_2,l_1,l_0]);
+    %%%%%%  check t_1 valuable %%%%%%
+        theta_1(:,jj) = acos((1-t_1.^2)./(1+t_1.^2));
+    %%%%%%  check theta_1 within boundary %%%%%%
+    end
+    for kk = 1 : 2 % theta_1
+        for jj = 1 : 2 % theta_3
+           theta_2(kk,jj) = acos((p_u-a*cos(theta_1(kk,jj))+c)/(d+e+b*sin(theta_3(jj))));
+           %%%%%%  check theta_2 within boundary %%%%%%
+        end
+    end
+    % four solutions for each leg
+    solutions = [];
+    for kk = 1 : 2 
+        if isreal(theta_1(1,kk)) == 1
+            for jj = 1 : 2 
+                if theta_2(jj,kk) >= theta_1(jj,kk)
+                    solutions = [solutions;theta_1(jj,kk),theta_2(jj,kk),theta_3(:,kk)];
+                end
+            end
+        end
+    end
+    %%%%%%  check which solution is the nearest %%%%%%
+    bestSolution = findNearestSolution(prev_thetas(ii,:),solutions);
+    thetas(ii,:) = bestSolution;
+% end
 %
-%%
-% General Base
-h = drawRobotFrame([0,0,0]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-circ = linspace(0,2*pi,50);
-L_base = line(r*cos(circ),r*sin(circ),zeros(length(circ)),...
-    'Color','k','LineWidth',1.5);
-set(L_base,'Parent',hg);
-T_base = hgtransform('Parent',ax,'Matrix',makehgtform('translate',[0,0,0]));
-set(hg,'Parent',T_base);
-
-% Leg 1: Base
-h = drawRobotFrame([0,0,1]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-T1_0 = hgtransform('Parent',T_base,'Matrix',T{1,1});
-set(hg,'Parent',T1_0);
-
-% Leg 1: Link 1
-h = drawRobotFrame([0,1,0]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L1_1 = line([0,a],[0,0],[0,0],...
-    'Color','r','LineWidth',1.5);
-set(L1_1,'Parent',hg);
-T1_1 = hgtransform('Parent',T1_0,'Matrix',T{1,2});
-set(hg,'Parent',T1_1);
-
-% Leg 1: Link 2
-h = drawRobotFrame([1,0,0]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L1_2 = line([0,e],[0,0],[0,0],...
-    'Color','b','LineWidth',1.5);
-set(L1_2,'Parent',hg);
-T1_2 = hgtransform('Parent',T1_1,'Matrix',T{1,3});
-set(hg,'Parent',T1_2);
-
-% Leg 1: Link 3
-h = drawRobotFrame([1,1,0]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L1_3 = line([0,b],[0,0],[0,0],...
-    'Color','g','LineWidth',1.5);
-set(L1_3,'Parent',hg);
-T1_3 = hgtransform('Parent',T1_2,'Matrix',T{1,4});
-set(hg,'Parent',T1_3);
-
-% Leg 1: Link 4
-h = drawRobotFrame([1,0,1]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L1_4 = line([0,d],[0,0],[0,0],...
-    'Color','b','LineWidth',1.5);
-set(L1_4,'Parent',hg);
-T1_4 = hgtransform('Parent',T1_3,'Matrix',T{1,5});
-set(hg,'Parent',T1_4);
-
-% Leg 1: end
-h = drawRobotFrame([0,1,1]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-T1_5 = hgtransform('Parent',T1_4,'Matrix',T{1,6});
-set(hg,'Parent',T1_5);
 %
-% Leg 2: Base
-h = drawRobotFrame([0,0,1]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-T2_0 = hgtransform('Parent',T_base,'Matrix',T{2,1});
-set(hg,'Parent',T2_0);
 
-% Leg 2: Link 1
-h = drawRobotFrame([0,1,0]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L2_1 = line([0,a],[0,0],[0,0],...
-    'Color','r','LineWidth',1.5);
-set(L2_1,'Parent',hg);
-T2_1 = hgtransform('Parent',T2_0,'Matrix',T{2,2});
-set(hg,'Parent',T2_1);
-
-% Leg 2: Link 2
-h = drawRobotFrame([1,0,0]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L2_2 = line([0,e],[0,0],[0,0],...
-    'Color','b','LineWidth',1.5);
-set(L2_2,'Parent',hg);
-T2_2 = hgtransform('Parent',T2_1,'Matrix',T{2,3});
-set(hg,'Parent',T2_2);
-
-% Leg 2: Link 3
-h = drawRobotFrame([1,1,0]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L2_3 = line([0,b],[0,0],[0,0],...
-    'Color','g','LineWidth',1.5);
-set(L2_3,'Parent',hg);
-T2_3 = hgtransform('Parent',T2_2,'Matrix',T{2,4});
-set(hg,'Parent',T2_3);
-
-% Leg 2: Link 4
-h = drawRobotFrame([1,0,1]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L2_4 = line([0,d],[0,0],[0,0],...
-    'Color','b','LineWidth',1.5);
-set(L2_4,'Parent',hg);
-T2_4 = hgtransform('Parent',T2_3,'Matrix',T{2,5});
-set(hg,'Parent',T2_4);
-
-% Leg 2: end
-h = drawRobotFrame([0,1,1]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-T2_5 = hgtransform('Parent',T2_4,'Matrix',T{2,6});
-set(hg,'Parent',T2_5);
-
-% Leg 3: Base
-h = drawRobotFrame([0,0,1]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-T3_0 = hgtransform('Parent',T_base,'Matrix',T{3,1});
-set(hg,'Parent',T3_0);
-
-% Leg 3: Link 1
-h = drawRobotFrame([0,1,0]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L3_1 = line([0,a],[0,0],[0,0],...
-    'Color','r','LineWidth',1.5);
-set(L3_1,'Parent',hg);
-T3_1 = hgtransform('Parent',T3_0,'Matrix',T{3,2});
-set(hg,'Parent',T3_1);
-
-% Leg 3: Link 2
-h = drawRobotFrame([1,0,0]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L3_2 = line([0,e],[0,0],[0,0],...
-    'Color','b','LineWidth',1.5);
-set(L3_2,'Parent',hg);
-T3_2 = hgtransform('Parent',T3_1,'Matrix',T{3,3});
-set(hg,'Parent',T3_2);
-
-% Leg 3: Link 3
-h = drawRobotFrame([1,1,0]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L3_3 = line([0,b],[0,0],[0,0],...
-    'Color','g','LineWidth',1.5);
-set(L3_3,'Parent',hg);
-T3_3 = hgtransform('Parent',T3_2,'Matrix',T{3,4});
-set(hg,'Parent',T3_3);
-
-% Leg 3: Link 4
-h = drawRobotFrame([1,0,1]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-L3_4 = line([0,d],[0,0],[0,0],...
-    'Color','b','LineWidth',1.5);
-set(L3_4,'Parent',hg);
-T3_4 = hgtransform('Parent',T3_3,'Matrix',T{3,5});
-set(hg,'Parent',T3_4);
-
-% Leg 3: end
-h = drawRobotFrame([0,1,1]);
-hg = hggroup('Parent',ax);
-set(h,'Parent',hg);
-T3_5 = hgtransform('Parent',T3_4,'Matrix',T{3,6});
-set(hg,'Parent',T3_5);
 

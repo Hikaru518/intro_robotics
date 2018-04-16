@@ -1,5 +1,9 @@
 function [  ] = drawNovintFalcon( thetas )
 
+% thetas = [0.900266051080467,2.04492977494102,1.57079632679490;
+%     0.900266051080467,2.04492977494102,1.57079632679490;
+%     0.900266051080467,2.04492977494102,1.57079632679490];
+
 a = 60; %mm
 b = 103; %mm
 c = 16.3; %mm
@@ -8,8 +12,7 @@ e = 12; % mm
 r = 37; %mm
 
 % work space of the Novint Falcon [ xmin, xmax, ymin, ymax, zmin, zmax]
-workspace = [-100,100,-100,100,0,200];
-vector_size = 0.05*max(abs(diff(reshape(workspace,2,3))));
+workspace = [-100,100,-100,100,-200,200];
 
 T = NovintFalcon_FK( thetas );
 
@@ -91,6 +94,7 @@ hg = hggroup('Parent',ax);
 set(h,'Parent',hg);
 T1_5 = hgtransform('Parent',T1_4,'Matrix',T{1,6});
 set(hg,'Parent',T1_5);
+
 %
 % Leg 2: Base
 h = drawRobotFrame([0,0,1]);
@@ -200,6 +204,34 @@ set(h,'Parent',hg);
 T3_5 = hgtransform('Parent',T3_4,'Matrix',T{3,6});
 set(hg,'Parent',T3_5);
 
+% End Effector
+h = drawRobotFrame([0,0,0]);
+hg = hggroup('Parent',ax);
+set(h,'Parent',hg);
+end_eff = T{1,1}*T{1,2}*T{1,3}*T{1,4}*T{1,5}*T{1,6}*dhtf(pi/2,c,0,pi);
+circ = -pi : 0.01 : pi;
+Lend = line(end_eff(1)+c*cos(circ),end_eff(2)+c*sin(circ),end_eff(3)*ones(length(circ)),...
+    'Color','k','LineWidth',1.5);
+set(Lend,'Parent',hg);
+T_end = hgtransform('Parent',T1_5,'Matrix',dhtf(pi/2,c,0,pi));
+set(hg,'Parent',T_end);
+
+function h = drawRobotFrame( color )
+    vector_size = 0.05*max(abs(diff(reshape(workspace,2,3))));
+    origin_size = 20;
+    marker_size = 10;
+    % Plot reference frame
+    X_b = [vector_size,0,0,1]';
+    Y_b = [0,vector_size,0,1]';
+    Z_b = [0,0,vector_size,1]';
+    h(1) = line(0,0,0,'Marker','.','MarkerSize',origin_size,'Color',color);
+    h(2) = line([0,X_b(1)],[0,X_b(2)],[0,X_b(3)],'LineWidth',1.5,'Color',color);
+    h(3) = line([0,Y_b(1)],[0,Y_b(2)],[0,Y_b(3)],'LineWidth',1.5,'Color',color);
+    h(4) = line([0,Z_b(1)],[0,Z_b(2)],[0,Z_b(3)],'LineWidth',1.5,'Color',color);
+    h(5) = line(X_b(1),X_b(2),X_b(3),'LineWidth',1.5,'Marker','x','MarkerSize',marker_size,'Color',color);
+    h(6) = line(Y_b(1),Y_b(2),Y_b(3),'LineWidth',1.5,'Marker','o','MarkerSize',marker_size,'Color',color);
+    h(7) = line(Z_b(1),Z_b(2),Z_b(3),'LineWidth',1.5,'Marker','d','MarkerSize',marker_size,'Color',color);
+end
 
 end
 
