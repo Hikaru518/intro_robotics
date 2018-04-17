@@ -1,0 +1,16 @@
+
+t = 0:0.01:2*pi;
+%%
+x = 10*cos(t)+10;
+y = 10*sin(t);
+z = zeros(1,length(x))+170;
+
+
+
+s = zeros(3,length(z));
+for ii = 1:length(x)
+    s(1,ii) = x(ii);
+    s(2,ii) = y(ii);
+    s(3,ii) = z(ii);
+end
+

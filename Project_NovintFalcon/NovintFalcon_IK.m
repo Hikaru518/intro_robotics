@@ -1,6 +1,7 @@
-function [ thetas ] = NovintFalcon_IK( prev_thetas,position )
+function [ is_solution, thetas ] = NovintFalcon_IK( prev_thetas,position )
 %%
 
+is_solution = true;
 % parameters
 phi(1) = 0*pi/180;
 phi(2) = 120*pi/180;
@@ -62,8 +63,20 @@ for ii = 1 : 3
     %%%%%%  check which solution is the nearest %%%%%%
     bestSolution = findNearestSolution(prev_thetas,solutions);
     thetas(ii,:) = bestSolution;
+    
+
+    
 end
 %
+
+% check whether there is a solution
+zeroVec = zeros(1,3);
+for ii = 1:3
+    diffVec = thetas(ii,:) - zeroVec;
+    if(norm(diffVec)<0.0001)  % no solution
+        is_solution = false;
+    end
+end
 
 end
 

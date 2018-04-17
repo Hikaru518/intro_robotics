@@ -12,12 +12,13 @@ e = 12; % mm
 r = 37; %mm
 
 % work space of the Novint Falcon [ xmin, xmax, ymin, ymax, zmin, zmax]
-workspace = [-100,100,-100,100,-200,200];
+workspace = [-100,100,-100,100,0,200];
 
 T = NovintFalcon_FK( thetas );
 
 % Create figure window
-figure('Color','w');
+%figure('Color','w');
+%hold on;
 
 % Create axes object
 ax = axes('XLim',workspace(1:2),'YLim',workspace(3:4),'ZLim',workspace(5:6));
