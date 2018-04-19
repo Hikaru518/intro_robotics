@@ -1,3 +1,6 @@
+% Lab3
+% Peiguang Wang, Sichao Zhang
+
 function [ tau ] = robController( trajectory, Theta, Theta_dot, t , rob )
 % MECH 498/598 - Intro to Robotics - Spring 2016
 % Lab 3

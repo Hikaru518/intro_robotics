@@ -1,3 +1,6 @@
+% Lab3
+% Peiguang Wang, Sichao Zhang
+
 function [  ] = simulateRR(  )
 % MECH 498 - Intro to Robotics - Spring 2016
 % Lab 3
@@ -119,16 +122,19 @@ subplot(311);
 plot(t,k);
 ylabel('Kinematic Energy');
 xlabel('t');
+title('Kinematic Energy');
 
 subplot(312);
 plot(t,u);
 ylabel('Potential Energy');
 xlabel('t');
+title('Potential Energy')
 
 subplot(313);
 plot(t,energy);
 xlabel('t');
 ylabel('Total Energy');
+title('Total Energy');
 
 
 end

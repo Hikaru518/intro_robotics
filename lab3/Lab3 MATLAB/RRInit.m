@@ -1,3 +1,6 @@
+% Lab3
+% Peiguang Wang, Sichao Zhang
+
 function [ robot ] = RRInit(  )
 % MECH 498 - Intro to Robotics - Spring 2014
 % Lab 4
