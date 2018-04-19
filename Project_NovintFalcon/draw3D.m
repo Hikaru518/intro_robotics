@@ -18,7 +18,7 @@ v = VideoWriter('WaveMovie.avi');
 open(v);
 
 % for t = 1:size(s,2)
-for t = 1:50
+for t = 1:30
     disp(t);
     % Set desired position for the tool from path file (not your choice)
     position = s(:,t);

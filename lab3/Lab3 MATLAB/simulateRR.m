@@ -38,7 +38,7 @@ I2 = 1/12*m_r2*l_2^2 + m_2*(l_2/2)^2;
 tau_max = 20; % [N-m] (Scalar)
 
 % Time
-dt = 0.01; % [s]
+dt = 0.08; % [s]
 t_f = 10; % [s]
 
 % Initial Conditions
